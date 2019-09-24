@@ -1,5 +1,4 @@
 resource "aws_s3_bucket" "aeternity-database-backups" {
-  provider = "aws.eu-central-1"
   bucket   = "aeternity-database-backups"
 
   acl           = "private"
@@ -8,7 +7,6 @@ resource "aws_s3_bucket" "aeternity-database-backups" {
 }
 
 resource "aws_s3_bucket" "aeternity-node-releases" {
-  provider      = "aws.eu-central-1"
   bucket        = "aeternity-node-releases"
   region        = "eu-central-1"
   acl           = "public-read"
@@ -16,7 +14,6 @@ resource "aws_s3_bucket" "aeternity-node-releases" {
 }
 
 resource "aws_s3_bucket" "aeternity-node-builds" {
-  provider = "aws.eu-central-1"
   bucket   = "aeternity-node-builds"
 
   acl           = "public-read"
