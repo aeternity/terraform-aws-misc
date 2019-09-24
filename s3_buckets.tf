@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "aeternity-database-backups" {
-  bucket   = "aeternity-database-backups"
+  bucket = "aeternity-database-backups"
 
   acl           = "private"
   force_destroy = false
@@ -11,20 +11,4 @@ resource "aws_s3_bucket" "aeternity-node-releases" {
   region        = "eu-central-1"
   acl           = "public-read"
   force_destroy = false
-}
-
-resource "aws_s3_bucket" "aeternity-node-builds" {
-  bucket   = "aeternity-node-builds"
-
-  acl           = "public-read"
-  force_destroy = false
-
-  lifecycle_rule {
-    enabled                                = true
-    abort_incomplete_multipart_upload_days = 2
-
-    expiration {
-      days = 5
-    }
-  }
 }
