@@ -1,8 +1,15 @@
 variable "zone_id" {
-  description = "DNS zone ID"
-  default     = "ZSEEAAX46MKWZ"
+  default = "ZSEEAAX46MKWZ"
 }
 
 variable "domain" {
   default = "aeternity.io"
+}
+
+variable "ops_zone_id" {
+  default = "Z2J3KVPABDNIL1"
+}
+
+variable "ops_domain" {
+  default = "ops.aeternity.com"
 }

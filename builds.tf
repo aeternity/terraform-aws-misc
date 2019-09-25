@@ -1,6 +1,6 @@
 locals {
-  fqdn         = "builds.${var.domain}"
-  s3_origin_id = "S3-aeternity-node-builds"
+  builds_fqdn         = "builds.${var.domain}"
+  builds_s3_origin_id = "S3-aeternity-node-builds"
 }
 
 resource "aws_s3_bucket" "aeternity-node-builds" {
@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "aeternity-node-builds" {
 
 resource "aws_acm_certificate" "builds" {
   provider          = aws.us-east-1
-  domain_name       = local.fqdn
+  domain_name       = local.builds_fqdn
   validation_method = "DNS"
 }
 
@@ -41,12 +41,12 @@ resource "aws_acm_certificate_validation" "builds" {
 
 resource "aws_cloudfront_distribution" "builds" {
   enabled         = true
-  aliases         = [local.fqdn]
+  aliases         = [local.builds_fqdn]
   is_ipv6_enabled = true
 
   origin {
     domain_name = aws_s3_bucket.aeternity-node-builds.bucket_domain_name
-    origin_id   = local.s3_origin_id
+    origin_id   = local.builds_s3_origin_id
   }
 
   default_cache_behavior {
@@ -62,7 +62,7 @@ resource "aws_cloudfront_distribution" "builds" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = local.s3_origin_id
+    target_origin_id       = local.builds_s3_origin_id
   }
 
   restrictions {
@@ -80,7 +80,7 @@ resource "aws_cloudfront_distribution" "builds" {
 
 resource "aws_route53_record" "builds" {
   zone_id = var.zone_id
-  name    = local.fqdn
+  name    = local.builds_fqdn
   type    = "A"
 
   alias {
