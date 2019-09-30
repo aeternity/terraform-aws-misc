@@ -40,7 +40,7 @@ commands:
       - run:
           name: Terraform validate
           command: |
-            terraform validate -var vault_addr=dummy << parameters.path >>
+            terraform validate << parameters.path >>
 
   terraform_plan:
     parameters:
@@ -68,7 +68,6 @@ commands:
               -lock-timeout=<< parameters.lock_timeout >> \
               -parallelism=<< parameters.parallelism >> \
               -out=<< parameters.out >> \
-              -var vault_addr=${VAULT_ADDR:?} \
               << parameters.path >>
       - persist_to_workspace:
           root: << parameters.plans_workspace >>
