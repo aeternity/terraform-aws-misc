@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "aeternity-node-builds" {
     abort_incomplete_multipart_upload_days = 2
 
     expiration {
-      days = 5
+      days = 30
     }
   }
 }
