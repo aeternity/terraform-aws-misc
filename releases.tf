@@ -5,7 +5,6 @@ locals {
 
 resource "aws_s3_bucket" "aeternity-node-releases" {
   bucket        = "aeternity-node-releases"
-  region        = "eu-central-1"
   acl           = "public-read"
   force_destroy = false
 
@@ -16,7 +15,6 @@ resource "aws_s3_bucket" "aeternity-node-releases" {
     expose_headers  = []
     max_age_seconds = 0
   }
-
 
   server_side_encryption_configuration {
     rule {

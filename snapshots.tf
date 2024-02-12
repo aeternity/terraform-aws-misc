@@ -5,7 +5,6 @@ locals {
 
 resource "aws_s3_bucket" "aeternity-node-snapshots" {
   bucket        = "aeternity-database-backups"
-  region        = "eu-central-1"
   acl           = "public-read"
   force_destroy = false
 
