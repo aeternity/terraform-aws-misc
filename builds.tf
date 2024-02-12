@@ -4,10 +4,21 @@ locals {
 }
 
 resource "aws_s3_bucket" "aeternity-node-builds" {
-  bucket = "aeternity-node-builds"
-
-  acl           = "public-read"
+  bucket        = "aeternity-node-builds"
   force_destroy = false
+
+  tags = {
+    Name = "aeternity-node-builds"
+  }
+}
+
+resource "aws_s3_bucket_acl" "aeternity-node-builds" {
+  bucket = aws_s3_bucket.aeternity-node-builds.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_cors_configuration" "aeternity-node-builds" {
+  bucket = aws_s3_bucket.aeternity-node-builds.id
 
   cors_rule {
     allowed_headers = []
@@ -16,27 +27,32 @@ resource "aws_s3_bucket" "aeternity-node-builds" {
     expose_headers  = []
     max_age_seconds = 0
   }
+}
 
+resource "aws_s3_bucket_server_side_encryption_configuration" "aeternity-node-builds" {
+  bucket = aws_s3_bucket.aeternity-node-builds.id
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
 
-  lifecycle_rule {
-    enabled                                = true
-    abort_incomplete_multipart_upload_days = 2
+resource "aws_s3_bucket_lifecycle_configuration" "aeternity-node-builds" {
+  bucket = aws_s3_bucket.aeternity-node-builds.id
+
+  rule {
+    id     = "rule-1"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 2
+    }
 
     expiration {
       days = 30
     }
-  }
-
-  tags = {
-    Name = "aeternity-node-builds"
   }
 }
 

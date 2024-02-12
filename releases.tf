@@ -5,8 +5,20 @@ locals {
 
 resource "aws_s3_bucket" "aeternity-node-releases" {
   bucket        = "aeternity-node-releases"
-  acl           = "public-read"
   force_destroy = false
+
+  tags = {
+    Name = "aeternity-node-releases"
+  }
+}
+
+resource "aws_s3_bucket_acl" "aeternity-node-releases" {
+  bucket = aws_s3_bucket.aeternity-node-releases.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_cors_configuration" "aeternity-node-releases" {
+  bucket = aws_s3_bucket.aeternity-node-releases.id
 
   cors_rule {
     allowed_headers = []
@@ -15,17 +27,15 @@ resource "aws_s3_bucket" "aeternity-node-releases" {
     expose_headers  = []
     max_age_seconds = 0
   }
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "aeternity-node-releases" {
+  bucket = aws_s3_bucket.aeternity-node-releases.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
-  }
-
-  tags = {
-    Name = "aeternity-node-releases"
   }
 }
 
@@ -73,17 +83,5 @@ resource "aws_cloudfront_distribution" "releases" {
     acm_certificate_arn      = var.cert_arn_wildcard_services
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.1_2016"
-  }
-}
-
-resource "aws_route53_record" "releases" {
-  zone_id = var.zone_id
-  name    = local.releases_fqdn
-  type    = "A"
-
-  alias {
-    name                   = aws_cloudfront_distribution.releases.domain_name
-    zone_id                = aws_cloudfront_distribution.releases.hosted_zone_id
-    evaluate_target_health = false
   }
 }
