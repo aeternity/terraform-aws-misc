@@ -85,3 +85,15 @@ resource "aws_cloudfront_distribution" "releases" {
     minimum_protocol_version = "TLSv1.1_2016"
   }
 }
+
+resource "aws_route53_record" "releases" {
+  zone_id = var.zone_id
+  name    = local.releases_fqdn
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.releases.domain_name
+    zone_id                = aws_cloudfront_distribution.releases.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
