@@ -5,9 +5,20 @@ locals {
 
 resource "aws_s3_bucket" "aeternity-node-snapshots" {
   bucket        = "aeternity-database-backups"
-  region        = "eu-central-1"
-  acl           = "public-read"
   force_destroy = false
+
+  tags = {
+    Name = "aeternity-database-backups"
+  }
+}
+
+resource "aws_s3_bucket_acl" "aeternity-node-snapshots" {
+  bucket = aws_s3_bucket.aeternity-node-snapshots.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_cors_configuration" "aeternity-node-snapshots" {
+  bucket = aws_s3_bucket.aeternity-node-snapshots.id
 
   cors_rule {
     allowed_headers = []
@@ -16,26 +27,32 @@ resource "aws_s3_bucket" "aeternity-node-snapshots" {
     expose_headers  = []
     max_age_seconds = 0
   }
+}
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "aeternity-node-snapshots" {
+  bucket = aws_s3_bucket.aeternity-node-snapshots.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
 
-  lifecycle_rule {
-    enabled                                = true
-    abort_incomplete_multipart_upload_days = 2
+resource "aws_s3_bucket_lifecycle_configuration" "aeternity-node-snapshots" {
+  bucket = aws_s3_bucket.aeternity-node-snapshots.id
+
+  rule {
+    id     = "rule-1"
+    status = "Enabled"
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 2
+    }
 
     expiration {
       days = 60
     }
-  }
-
-  tags = {
-    Name = "aeternity-database-backups"
   }
 }
 
