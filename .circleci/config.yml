@@ -86,12 +86,12 @@ commands:
 
   terraform_apply:
     parameters:
-      plans_workspace:
-        type: string
-        default: /tmp/plans
       path:
         type: string
-        default: "/tmp/plans/plan.out"
+        default: "."
+      out:
+        type: string
+        default: "plan.out"
       auto_approve:
         type: boolean
         default: false
@@ -103,7 +103,7 @@ commands:
         default: "5m"
     steps:
       - attach_workspace:
-          at: << parameters.plans_workspace >>
+          at: << parameters.path >>
       - run:
           name: Terraform apply
           command: |
@@ -114,6 +114,7 @@ commands:
             envdir /secrets terraform -chdir=<< parameters.path >> apply \
               -lock-timeout=<< parameters.lock_timeout >> \
               -parallelism=<< parameters.parallelism >> \
+              << parameters.out >>
               $TF_ARGS
 
 jobs:
