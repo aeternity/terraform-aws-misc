@@ -24,7 +24,7 @@ commands:
       - run:
           name: Terraform init
           command: |
-            envdir /secrets terraform -chdir=<< parameters.path >> init -lock-timeout=<< parameters.lock_timeout >>
+            envdir /secrets terraform init -lock-timeout=<< parameters.lock_timeout >> << parameters.path >>
 
   terraform_validate:
     description: Format check and validate. Requires init.
@@ -36,11 +36,11 @@ commands:
       - run:
           name: Terraform format check
           command: |
-            terraform -chdir=<< parameters.path >> fmt -check=true -diff=true
+            terraform fmt -check=true -diff=true << parameters.path >>
       - run:
           name: Terraform validate
           command: |
-            terraform -chdir=<< parameters.path >> validate
+            terraform validate << parameters.path >>
 
   terraform_plan:
     parameters:
@@ -64,10 +64,11 @@ commands:
           name: Terraform plan
           command: |
             mkdir -p $(dirname "<< parameters.out >>")
-            envdir /secrets terraform -chdir=<< parameters.path >> plan \
+            envdir /secrets terraform plan \
               -lock-timeout=<< parameters.lock_timeout >> \
               -parallelism=<< parameters.parallelism >> \
-              -out=<< parameters.out >> | tee terraform-plan-info
+              -out=<< parameters.out >> \
+              << parameters.path >> | tee terraform-plan-info
 
             export TERRAFORM_PLAN_INFO=`cat terraform-plan-info | grep Plan: | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g'`
             curl -sSX POST \
@@ -111,10 +112,11 @@ commands:
             if [ "<< parameters.auto_approve >>" = "true" ]; then
                 TF_ARGS="$TF_ARGS -auto-approve"
             fi
-            envdir /secrets terraform -chdir=<< parameters.path >> apply \
+            envdir /secrets terraform apply \
               -lock-timeout=<< parameters.lock_timeout >> \
               -parallelism=<< parameters.parallelism >> \
-              $TF_ARGS
+              $TF_ARGS \
+              << parameters.path >>
 
 jobs:
   validate_and_plan:
