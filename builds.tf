@@ -9,6 +9,23 @@ resource "aws_s3_bucket" "aeternity-node-builds" {
   acl           = "public-read"
   force_destroy = false
 
+  cors_rule {
+    allowed_headers = []
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    expose_headers  = []
+    max_age_seconds = 0
+  }
+
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
   lifecycle_rule {
     enabled                                = true
     abort_incomplete_multipart_upload_days = 2
@@ -16,6 +33,10 @@ resource "aws_s3_bucket" "aeternity-node-builds" {
     expiration {
       days = 30
     }
+  }
+
+  tags = {
+    Name = "aeternity-node-builds"
   }
 }
 
@@ -35,6 +56,13 @@ resource "aws_cloudfront_distribution" "builds" {
 
     forwarded_values {
       query_string = false
+
+      headers = [
+        "Accept-Encoding",
+        "Access-Control-Request-Headers",
+        "Access-Control-Request-Method",
+        "Origin",
+      ]
 
       cookies {
         forward = "none"
