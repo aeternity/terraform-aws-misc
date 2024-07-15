@@ -5,6 +5,7 @@ locals {
     "aesophia_http",
     "mdw-frontend",
     "aepp-base",
+    "aepp-base-backend",
     "aepp-contracts",
     "aepp-faucet-nodejs",
     "aepp-hyperchain",
