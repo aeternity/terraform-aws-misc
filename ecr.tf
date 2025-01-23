@@ -14,6 +14,7 @@ locals {
     "graffiti-server",
     "aepp-governance",
     "governance-server",
+    "aepp-hyperchains-initiator",
   ])
 }
 
