@@ -15,6 +15,7 @@ locals {
     "aepp-governance",
     "governance-server",
     "aepp-hyperchains-initiator",
+    "aepp-hyperchain-bridge",
   ])
 }
 
